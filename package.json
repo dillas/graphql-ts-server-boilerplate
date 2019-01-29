@@ -4,9 +4,11 @@
   "description": "Awesome project developed with TypeORM.",
   "devDependencies": {
     "@types/bcryptjs": "^2.4.1",
+    "@types/express": "^4.16.1",
     "@types/ioredis": "^3.2.7",
     "@types/jest": "^22.2.3",
     "@types/node": "^9.6.6",
+    "@types/node-fetch": "^1.6.9",
     "@types/uuid": "^3.4.3",
     "@types/yup": "^0.24.3",
     "gql2ts": "^1.7.2",
@@ -19,14 +21,17 @@
     "typescript": "2.8.3"
   },
   "dependencies": {
+    "@gql2ts/from-schema": "^1.8.1",
     "bcryptjs": "^2.4.3",
     "cross-env": "^5.2.0",
+    "express": "^4.16.3",
     "graphql": "^0.13.2",
     "graphql-import": "^0.5.0",
     "graphql-request": "^1.5.1",
     "graphql-tools": "^3.0.0",
     "graphql-yoga": "^1.9.2",
     "ioredis": "^3.2.2",
+    "node-fetch": "^2.1.2",
     "pg": "^7.4.1",
     "reflect-metadata": "^0.1.12",
     "typeorm": "0.2.0",
@@ -34,11 +39,13 @@
     "yup": "^0.24.1"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=development nodemon --exec ts-node --files src/index.ts",
-    "test": "cross-env NODE_ENV=test jest --forceExit --detectOpenHandles",
-    "gen-schema-types": "gql2ts src/schema.graphql -o src/types/schema.d.ts"
+    "start": "cross-env NODE_ENV=development nodemon --exec ts-node src/index.ts",
+    "test": "cross-env NODE_ENV=test jest --watch",
+    "gen-schema-types": "ts-node src/scripts/createTypes.ts"
   },
   "jest": {
+    "verbose": true,
+    "testURL": "http://localhost/",
     "globalSetup": "./src/testSetup/callSetup.js",
     "transform": {
       "^.+\\.tsx?$": "ts-jest"

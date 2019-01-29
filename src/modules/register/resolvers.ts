@@ -7,7 +7,7 @@ import {
   duplicateEmail,
   emailNotLongEnough,
   invalidEmail,
-  passwordNotLongNough
+  passwordNotLongEnough
 } from "./errorMessages";
 import { createConfirmEmailLink } from "../../utils/createConfirmEmailLink";
 
@@ -19,7 +19,7 @@ const schema = yup.object().shape({
     .email(invalidEmail),
   password: yup
     .string()
-    .min(3, passwordNotLongNough)
+    .min(3, passwordNotLongEnough)
     .max(255)
 });
 
@@ -41,12 +41,12 @@ export const resolvers: ResolverMap = {
 
       const { email, password } = args;
 
-      const userAlredyExists = await User.findOne({
+      const userAlreadyExists = await User.findOne({
         where: { email },
         select: ["id"]
       });
 
-      if (userAlredyExists) {
+      if (userAlreadyExists) {
         return [
           {
             path: "email",
