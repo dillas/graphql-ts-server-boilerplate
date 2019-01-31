@@ -1,15 +1,16 @@
 import * as bcrypt from "bcryptjs";
 import * as yup from "yup";
-import { ResolverMap } from "../../types/graphql-utils";
 import { User } from "../../entity/User";
+import { ResolverMap } from "../../types/graphql-utils";
+import { createConfirmEmailLink } from "../../utils/createConfirmEmailLink";
 import { formatYupError } from "../../utils/formatYupError";
+import { sendNodeMailer } from "../../utils/sendEmail";
 import {
   duplicateEmail,
   emailNotLongEnough,
   invalidEmail,
   passwordNotLongEnough
 } from "./errorMessages";
-import { createConfirmEmailLink } from "../../utils/createConfirmEmailLink";
 
 const schema = yup.object().shape({
   email: yup
@@ -63,7 +64,12 @@ export const resolvers: ResolverMap = {
 
       await user.save();
 
-      await createConfirmEmailLink(url, user.id, redis);
+      if (process.env.NODE_ENV !== "test") {
+        await sendNodeMailer(
+          email,
+          await createConfirmEmailLink(url, user.id, redis)
+        );
+      }
 
       return null;
     }

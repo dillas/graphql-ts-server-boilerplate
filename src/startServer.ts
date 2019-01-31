@@ -1,8 +1,7 @@
 import { GraphQLServer } from "graphql-yoga";
 import { redis } from "./redis";
-
-import { createTypeormConn } from "./utils/createTypeormConn";
 import { conformEmail } from "./routes/confirmEmail";
+import { createTypeormConn } from "./utils/createTypeormConn";
 import { genSchema } from "./utils/genSchema";
 
 export const startServer = async () => {

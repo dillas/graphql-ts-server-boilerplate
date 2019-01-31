@@ -1,12 +1,12 @@
 import { request } from "graphql-request";
 import { User } from "../../entity/User";
+import { createTypeormConn } from "../../utils/createTypeormConn";
 import {
   duplicateEmail,
   emailNotLongEnough,
   invalidEmail,
   passwordNotLongEnough
 } from "./errorMessages";
-import { createTypeormConn } from "../../utils/createTypeormConn";
 
 const email = "tom@bob.com";
 const password = "jalksdf";
