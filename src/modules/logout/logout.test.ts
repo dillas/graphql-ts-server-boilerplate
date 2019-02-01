@@ -3,11 +3,11 @@ import { Connection } from "typeorm";
 import { User } from "../../entity/User";
 import { createTypeormConn } from "../../utils/createTypeormConn";
 
-let userId: string;
 let conn: Connection;
 const email = "";
 const password = "";
 
+let userId: string;
 beforeAll(async () => {
   conn = await createTypeormConn();
   const user = await User.create({
@@ -22,15 +22,6 @@ afterAll(async () => {
   conn.close();
 });
 
-const loginMutation = (e: string, p: string) => `
-mutation {
-  login(email: "${e}", password: "${p}") {
-    path
-    message
-  }
-}
-`;
-
 const meQuery = `
 {
     me {
@@ -40,16 +31,23 @@ const meQuery = `
 }
 `;
 
-describe("me", () => {
-  test("return null if no cookie", async () => {
-    const response = await axios.post(process.env.TEST_HOST as string, {
-      query: meQuery
-    });
+const logoutMutation = `
+mutation {
+  logout
+}
+`;
 
-    expect(response.data.data.me).toBeNull();
-  });
+const loginMutation = (e: string, p: string) => `
+mutation {
+  login(email: "${e}", password: "${p}") {
+    path
+    message
+  }
+}
+`;
 
-  test("get current user", async () => {
+describe("logout", () => {
+  test("test logging out a user", async () => {
     await axios.post(
       process.env.TEST_HOST as string,
       {
@@ -76,5 +74,27 @@ describe("me", () => {
         email
       }
     });
+
+    await axios.post(
+      process.env.TEST_HOST as string,
+      {
+        query: logoutMutation
+      },
+      {
+        withCredentials: true
+      }
+    );
+
+    const response2 = await axios.post(
+      process.env.TEST_HOST as string,
+      {
+        query: meQuery
+      },
+      {
+        withCredentials: true
+      }
+    );
+
+    expect(response2.data.data.me).toBeNull();
   });
 });
