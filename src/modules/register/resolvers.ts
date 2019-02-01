@@ -1,10 +1,9 @@
-import * as bcrypt from "bcryptjs";
 import * as yup from "yup";
 import { User } from "../../entity/User";
 import { ResolverMap } from "../../types/graphql-utils";
-import { createConfirmEmailLink } from "../../utils/createConfirmEmailLink";
 import { formatYupError } from "../../utils/formatYupError";
-import { sendNodeMailer } from "../../utils/sendEmail";
+// import { createConfirmEmailLink } from "../../utils/createConfirmEmailLink";
+// import { sendNodeMailer } from "../../utils/sendEmail";
 import {
   duplicateEmail,
   emailNotLongEnough,
@@ -31,8 +30,8 @@ export const resolvers: ResolverMap = {
   Mutation: {
     register: async (
       _,
-      args: GQL.IRegisterOnMutationArguments,
-      { redis, url }
+      args: GQL.IRegisterOnMutationArguments
+      // { redis, url }
     ) => {
       try {
         await schema.validate(args, { abortEarly: false });
@@ -56,20 +55,19 @@ export const resolvers: ResolverMap = {
         ];
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
       const user = User.create({
         email,
-        password: hashedPassword
+        password
       });
 
       await user.save();
 
-      if (process.env.NODE_ENV !== "test") {
-        await sendNodeMailer(
-          email,
-          await createConfirmEmailLink(url, user.id, redis)
-        );
-      }
+      // if (process.env.NODE_ENV !== "test") {
+      //   await sendNodeMailer(
+      //     email,
+      //     await createConfirmEmailLink(url, user.id, redis)
+      //   );
+      // }
 
       return null;
     }

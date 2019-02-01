@@ -11,7 +11,7 @@ const redis = new Redis();
 let conn: Connection;
 
 beforeAll(async () => {
-  await createTypeormConn();
+  conn = await createTypeormConn();
   const user = await User.create({
     email: "bob5@bob.com",
     password: "jlkajoioiqwe"
