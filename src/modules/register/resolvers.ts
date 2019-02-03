@@ -8,8 +8,8 @@ import {
   duplicateEmail,
   emailNotLongEnough,
   invalidEmail,
-  passwordNotLongEnough
 } from "./errorMessages";
+import { registerPasswordValidation } from "../../yapSchemas";
 
 const schema = yup.object().shape({
   email: yup
@@ -17,10 +17,7 @@ const schema = yup.object().shape({
     .min(3, emailNotLongEnough)
     .max(255)
     .email(invalidEmail),
-  password: yup
-    .string()
-    .min(3, passwordNotLongEnough)
-    .max(255)
+  password: registerPasswordValidation
 });
 
 export const resolvers: ResolverMap = {

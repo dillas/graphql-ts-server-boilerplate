@@ -1,7 +1,8 @@
 import * as bcrypt from "bcryptjs";
 import { User } from "../../entity/User";
 import { ResolverMap } from "../../types/graphql-utils";
-import { confirmEmailError, invalidLogin } from "./errorMessages";
+import { confirmEmailError, invalidLogin, forgotPasswordLockedError } from "./errorMessages";
+import { userSessionIdPrefix } from "../../constants";
 
 const errorRasponse = [
   {
@@ -18,7 +19,7 @@ export const resolvers: ResolverMap = {
     login: async (
       _,
       { email, password }: GQL.ILoginOnMutationArguments,
-      { session }
+      { session, redis, req }
     ) => {
       const user = await User.findOne({ where: { email } });
 
@@ -35,6 +36,15 @@ export const resolvers: ResolverMap = {
         ];
       }
 
+      if (user.forgotPasswordLocked) {
+        return [
+          {
+            path: "email",
+            message: forgotPasswordLockedError
+          }
+        ];
+      }
+
       const valid = await bcrypt.compare(password, user.password);
 
       if (!valid) {
@@ -42,6 +52,9 @@ export const resolvers: ResolverMap = {
       }
 
       session.userId = user.id;
+      if (req.sessionID) {
+        await redis.lpush(`${userSessionIdPrefix}${user.id}`, req.sessionID);
+      }
 
       return null;
     }
