@@ -1,8 +1,8 @@
 import { Connection } from "typeorm";
 import { User } from "../../entity/User";
-import { createTypeormConn } from "../../utils/createTypeormConn";
 import { confirmEmailError, invalidLogin } from "./errorMessages";
 import { TestClient } from "../../utils/TestClient";
+import { createTestConn } from "../../testUtils/createTestConn";
 
 const email = "tom@bob.com";
 const password = "jalksdf";
@@ -22,7 +22,7 @@ const loginExpectError = async (client: TestClient, e: string, p: string, errMsg
 
 let conn: Connection;
 beforeAll(async () => {
-  conn = await createTypeormConn();
+  conn = await createTestConn();
 });
 
 afterAll(async () => {

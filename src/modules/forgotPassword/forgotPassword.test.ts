@@ -1,6 +1,5 @@
 import { Connection } from "typeorm";
 import { User } from "../../entity/User";
-import { createTypeormConn } from "../../utils/createTypeormConn";
 import { TestClient } from "../../utils/TestClient";
 import { createForgotPasswordLink } from "../../utils/createForgotPasswordLink";
 import * as Redis from "ioredis";
@@ -8,6 +7,7 @@ import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount
 import { forgotPasswordLockedError } from "../login/errorMessages";
 import { passwordNotLongEnough } from "../register/errorMessages";
 import { expiredKeyError } from "./errorMessages";
+import { createTestConn } from "../../testUtils/createTestConn";
 
 let conn: Connection;
 const redis = new Redis();
@@ -17,7 +17,7 @@ const newPassword = "opiiopiodagagasdf";
 
 let userId: string;
 beforeAll(async () => {
-  conn = await createTypeormConn();
+  conn = await createTestConn();
   const user = await User.create({
     email,
     password,
